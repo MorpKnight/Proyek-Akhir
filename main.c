@@ -12,7 +12,8 @@ typedef struct BENDA{
 } RUMAH;
 
 int main(){
-    int i, n, j, a, malloccheck, uppercase, mainmenu, back_menu, pilihan;
+    int i, n, j, a;
+    int back_menu, pilihan, malloccheck, uppercase, mainmenu;
     char time_now[20], removename[20];
     RUMAH *benda;
     time_t s;
@@ -35,9 +36,9 @@ int main(){
         printf("5. Exit\n");
         printf("Pilihan anda: ");
         scanf("%d", &pilihan);
-        mainmenu += 1;
+        mainmenu = 1;
 
-    while(pilihan != 4){
+    while(pilihan != 5){
         switch(pilihan){
             case 1:
                 system("cls");
@@ -72,10 +73,19 @@ int main(){
             case 2:
                 system("cls");
                 printf("Device yang terdaftar: \n");
-                for(i=0; i<n; i++){
-                    printf("%s\n", benda[i].nama);
+                if(malloccheck == 0){
+                    printf("Tidak ada device yang terdaftar\n");
+                    printf("Silakan register device terlebih dahulu\n");
+                    printf("Tekan spasi untuk kembali ke menu\n");
+                    back_menu = getch();
+                    if(back_menu == 32){
+                        goto menu;
+                    }
+                } else {
+                    for(i=0; i<n; i++){
+                        printf("%s\n", benda[i].nama);
+                    }
                 }
-                //input spacebar to back to menu
                 printf("Tekan spasi untuk kembali ke menu\n");
                 back_menu = getch();
                 if(back_menu == 32){

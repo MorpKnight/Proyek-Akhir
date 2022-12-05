@@ -4,105 +4,182 @@
 #include <unistd.h>
 #include <time.h>
 #include <string.h>
+#include <conio.h>
 
 typedef struct BENDA{
     char nama[20], waktu_nyala[20], waktu_mati[20];
-    int temperatur;
+    int temperatur, count;
 } RUMAH;
 
-void display_time(){
-    time_t s;
-    struct tm* current_time;
-    s = time(NULL);
-    current_time = localtime(&s);
-    printf("%02d:%02d\n", current_time->tm_hour, current_time->tm_min);
-}
-
-void mainmenu(int *pilihan){
-    printf("Selamat datang di Home Automation\n");
-    printf("Program ini akan membantu anda dalam mengatur keadaan rumah anda, melalui automisasi yang dilakukan terhadap perangkat rumah anda\n");
-    printf("\n\nSilakan pilih menu dibawah\n");
-    printf("1. Tambahkan perangkat baru\n");
-    printf("2. Lihat daftar perangkat\n");
-    printf("3. Hapus perangkat\n");
-    printf("4. Bantuan\n");
-    printf("5. Keluar\n");
-
-    printf(">");
-    scanf("%d", pilihan);
-}
-
-void add_device(RUMAH *device, int *n, int *count){
-    int i;
-    display_time();
-    printf("Ada berapa perangkat yang ingin anda tambahkan?\n");
-    printf(">");
-    scanf("%d", n);
-    device = (RUMAH*)malloc(*n * sizeof(RUMAH));
-    count = (int*)malloc(*n * sizeof(int));
-
-    printf("Format waktu adalah HH:MM\n");
-    for(i = 0; i < *n; i++){
-        printf("Masukkan nama perangkat ke-%d\n", i+1);
-        printf("Nama benda: ");
-        scanf("%s", &(device+i)->nama);
-        printf("Waktu nyala: ");
-        scanf("%s", &(device+i)->waktu_nyala);
-        printf("Waktu mati: ");
-        scanf("%s", &(device+i)->waktu_mati);
-        printf("Temperatur: ");
-        scanf("%d", &(device+i)->temperatur);
-        printf("\n");
-    }
-
-}
-
-void check_device(RUMAH *device, int *n, int *count){
-    int i;
-    time_t s;
-    char waktu[20];
-    struct tm* current_time;
-
-    for(i = 0; i < *n; i++){
-        count[i] = 0;
-    }
-    //printf device
-    printf("Daftar perangkat yang ada\n");
-    for(i = 0; i < *n; i++){
-        printf("Nama benda: %s\n", device[i].nama);
-        printf("Waktu nyala: %s\n", device[i].waktu_nyala);
-        printf("Waktu mati: %s\n", device[i].waktu_mati);
-        printf("Temperatur: %d\n", device[i].temperatur);
-        printf("\n");
-    }
-
-
-    // while(1){
-    //     s = time(NULL);
-    //     current_time = localtime(&s);
-    //     sprintf(waktu, "%02d:%02d", current_time->tm_hour, current_time->tm_min);
-    //     for(i = 0; i < *n; i++){
-    //         printf("Nama benda: %s\n", (device+i)->nama);
-    //     }
-    //     printf("Waktu sekarang: %s\n", waktu);
-    //     sleep(1);
-    // }
-}
-
 int main(){
-    int i, n;
-    int *count, *pilihan;
-    char time_now[20], temp;
-    struct tm* current_time;
+    int i, n, j, a, malloccheck, uppercase, mainmenu, back_menu, pilihan;
+    char time_now[20], removename[20];
     RUMAH *benda;
     time_t s;
-    mainmenu(pilihan);
-    add_device(benda, &n, count);
-    check_device(benda, &n, count);
-    
-    printf("Terima kasih telah menggunakan program ini\n");
+    struct tm* current_time;
 
-    free(benda);
-    free(count);
+    malloccheck = 0;
+    mainmenu = 0;
+
+
+    menu:
+        if(mainmenu == 1){
+            system("cls");
+        }
+        printf("Program ini adalah untuk mengatur device di rumah anda\n");
+        printf("Silakan pilih menu dibawah ini\n");
+        printf("1. Register device\n");
+        printf("2. See device list\n");
+        printf("3. Remove device\n");
+        printf("4. See automation\n");
+        printf("5. Exit\n");
+        printf("Pilihan anda: ");
+        scanf("%d", &pilihan);
+        mainmenu += 1;
+
+    while(pilihan != 4){
+        switch(pilihan){
+            case 1:
+                system("cls");
+                printf("Masukkan jumlah device yang ingin anda register: ");
+                scanf("%d", &n);
+                if(malloccheck == 0){
+                    benda = (RUMAH*)malloc(n*sizeof(RUMAH));
+                    malloccheck = 1;
+                }
+                else{
+                    benda = (RUMAH*)realloc(benda, n*sizeof(RUMAH));
+                }
+                for(i=0; i<n; i++){
+                    printf("Masukkan nama device: ");
+                    scanf("%s", benda[i].nama);
+                    for(a=0; a<strlen(benda[i].nama); a++){
+                        uppercase = benda[i].nama[a];
+                        if(uppercase >= 97 && uppercase <= 122){
+                            benda[i].nama[a] = uppercase - 32;
+                        }
+                    }
+                    printf("Masukkan temperatur yang diinginkan: ");
+                    scanf("%d", &benda[i].temperatur);
+                    printf("Masukkan waktu nyala: ");
+                    scanf("%s", benda[i].waktu_nyala);
+                    printf("Masukkan waktu mati: ");
+                    scanf("%s", benda[i].waktu_mati);
+                    benda[i].count = 0;
+                }
+                goto menu;
+                break;
+            case 2:
+                system("cls");
+                printf("Device yang terdaftar: \n");
+                for(i=0; i<n; i++){
+                    printf("%s\n", benda[i].nama);
+                }
+                //input spacebar to back to menu
+                printf("Tekan spasi untuk kembali ke menu\n");
+                back_menu = getch();
+                if(back_menu == 32){
+                    goto menu;
+                }
+                break;
+            case 3:
+                system("cls");
+                printf("Device yang ingin dihapus:\n");
+                if(malloccheck == 0){
+                    printf("Tidak ada device yang terdaftar\n");
+                    printf("Tekan spasi untuk kembali ke menu\n");
+                    back_menu = getch();
+                    if(back_menu == 32){
+                        goto menu;
+                    }
+                }else{
+                    for(i=0; i<n; i++){
+                        printf("%s\n", benda[i].nama);
+                    }
+                    printf("Masukkan nama device yang ingin dihapus: ");
+                    scanf("%s", removename);
+                    for(a=0; a<strlen(removename); a++){
+                        uppercase = removename[a];
+                        if(uppercase >= 97 && uppercase <= 122){
+                            removename[a] = uppercase - 32;
+                        }
+                    }
+                    for(i=0; i<n; i++){
+                        if(strcmp(removename, benda[i].nama) == 0){
+                            for(j=i; j<n; j++){
+                                strcpy(benda[j].nama, benda[j+1].nama);
+                                benda[j].temperatur = benda[j+1].temperatur;
+                                strcpy(benda[j].waktu_nyala, benda[j+1].waktu_nyala);
+                                strcpy(benda[j].waktu_mati, benda[j+1].waktu_mati);
+                            }
+                            n -= 1;
+                            benda = (RUMAH*)realloc(benda, n*sizeof(RUMAH));
+                            printf("Device berhasil dihapus\n");
+                            printf("Tekan spasi untuk kembali ke menu\n");
+                            back_menu = getch();
+                            if(back_menu == 32){
+                                goto menu;
+                            }
+                        }
+                    }
+                }
+                break;
+            case 4:
+                system("cls");
+                if(malloccheck == 0){
+                    printf("Tidak ada device yang terdaftar\n");
+                    printf("Tekan spasi untuk kembali ke menu\n");
+                    back_menu = getch();
+                    if(back_menu == 32){
+                        goto menu;
+                    }
+                }else{
+                    printf("Press spacebar to quit\n");
+                    while(1){
+                        s = time(NULL);
+                        current_time = localtime(&s);
+                        sprintf(time_now, "%02d:%02d", current_time->tm_hour, current_time->tm_min);
+                        
+                        clock_t start_time = clock();
+                        
+                        for(i=0; i<n; i++){
+                            if(strcmp(time_now, benda[i].waktu_nyala) == 0){
+                                if(benda[i].count == 0){
+                                    printf("%s nyala\n", benda[i].nama);
+                                    benda[i].count = 1;
+                                }
+                            }
+                            if(strcmp(time_now, benda[i].waktu_mati) == 0){
+                                if(benda[i].count == 1){
+                                    printf("%s mati\n", benda[i].nama);
+                                    benda[i].count = 0;
+                                }
+                            }
+                        }
+                        while(clock() < start_time + 1 * CLOCKS_PER_SEC){
+                            if(kbhit()){
+                                a = _getch();
+                                if(a == 32){
+                                    goto menu;
+                                }
+                            }
+                        }
+
+                        sleep(1);
+                    }
+                }
+                break;
+            case 5:
+                system("cls");
+                printf("Terima kasih telah menggunakan program ini\n");
+                free(benda);
+                exit(0);
+                break;
+            default:
+                printf("Pilihan anda tidak ada\n");
+                goto menu;
+                break;
+        }
+    }
     return 0;
 }

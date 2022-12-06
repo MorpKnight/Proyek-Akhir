@@ -13,7 +13,7 @@ typedef struct BENDA{
 } RUMAH;
 
 int main(){
-    int i, n, j, a;
+    int i, j, k, n, a;
     int back_menu, pilihan, malloccheck, uppercase, mainmenu, device;
     float totalkwh;
     char time_now[20], removename[20];
@@ -52,7 +52,8 @@ int main(){
                     malloccheck = 1;
                 }
                 else{
-                    benda = (RUMAH*)realloc(benda, n*sizeof(RUMAH));
+                    k = sizeof(benda);
+                    benda = (RUMAH*)realloc(benda, (n+k)*sizeof(RUMAH));
                 }
                 for(i = 0; i < n; i++){
                     daftardevice:
@@ -63,6 +64,7 @@ int main(){
                         printf("4. TV\n");
                         printf("5. Pemanas Air\n");
                         printf("6. Daftar Manual\n");
+                        printf("7. Kembali ke menu utama\n");
                         printf("Silakan pilih: ");
                         scanf("%d", &device);
                         printf("\n");
@@ -119,6 +121,8 @@ int main(){
                             printf("Masukkan waktu device mati: ");
                             scanf("%s", benda[i].waktu_mati);
                             break;
+                        case 7:
+                            goto menu;
                         default:
                             printf("Invalid! Silakan ulangi\n");
                             goto daftardevice;
@@ -241,7 +245,6 @@ int main(){
                 }
                 break;
             case 5:
-                //total kwh
                 system("cls");
                 if(malloccheck == 0){
                     printf("Tidak ada device yang terdaftar\n");
@@ -263,16 +266,24 @@ int main(){
                 }
                 break;
             case 6:
-                system("cls");
-                printf("Terima kasih telah menggunakan program ini\n");
-                free(benda);
-                exit(0);
                 break;
             default:
+                system("cls");
                 printf("Pilihan anda tidak ada\n");
-                goto menu;
+                printf("Tekan spasi untuk kembali ke menu\n");
+                back_menu = getch();
+                if(back_menu == 32){
+                    goto menu;
+                }
                 break;
         }
     }
+    endprogram:
+        system("cls");
+        printf("Terima kasih telah menggunakan program ini\n");
+        //check to free memory
+        if(malloccheck == 1){
+            free(benda);
+        }
     return 0;
 }

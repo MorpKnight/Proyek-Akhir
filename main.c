@@ -115,7 +115,7 @@ int main(){
                             break;
                         case 6:
                             printf("Masukkan nama device: ");
-                            scanf("%s", benda[i].nama);
+                            scanf("%[^\n]s", benda[i].nama);
                             printf("Masukkan waktu device menyala: ");
                             scanf("%s", benda[i].waktu_nyala);
                             printf("Masukkan waktu device mati: ");

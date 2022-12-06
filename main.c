@@ -8,12 +8,14 @@
 
 typedef struct BENDA{
     char nama[20], waktu_nyala[20], waktu_mati[20];
-    int temperatur, count;
+    int temperatur, count, kecepatan, status;
+    float kwh;
 } RUMAH;
 
 int main(){
     int i, n, j, a;
-    int back_menu, pilihan, malloccheck, uppercase, mainmenu;
+    int back_menu, pilihan, malloccheck, uppercase, mainmenu, device;
+    float totalkwh;
     char time_now[20], removename[20];
     RUMAH *benda;
     time_t s;
@@ -29,20 +31,21 @@ int main(){
         }
         printf("Program ini adalah untuk mengatur device di rumah anda\n");
         printf("Silakan pilih menu dibawah ini\n");
-        printf("1. Register device\n");
-        printf("2. See device list\n");
-        printf("3. Remove device\n");
-        printf("4. See automation\n");
-        printf("5. Exit\n");
+        printf("1. Daftar perangkat\n");
+        printf("2. Lihat perangkat yang terdaftar\n");
+        printf("3. Hapus perangkat\n");
+        printf("4. Mode monitoring\n");
+        printf("5. Total kwh\n");
+        printf("6. Exit\n");
         printf("Pilihan anda: ");
         scanf("%d", &pilihan);
         mainmenu = 1;
 
-    while(pilihan != 5){
+    while(pilihan != 6){
         switch(pilihan){
             case 1:
                 system("cls");
-                printf("Masukkan jumlah device yang ingin anda register: ");
+                printf("Masukkan jumlah device yang ingin anda daftar: ");
                 scanf("%d", &n);
                 if(malloccheck == 0){
                     benda = (RUMAH*)malloc(n*sizeof(RUMAH));
@@ -51,21 +54,78 @@ int main(){
                 else{
                     benda = (RUMAH*)realloc(benda, n*sizeof(RUMAH));
                 }
-                for(i=0; i<n; i++){
-                    printf("Masukkan nama device: ");
-                    scanf("%s", benda[i].nama);
-                    for(a=0; a<strlen(benda[i].nama); a++){
-                        uppercase = benda[i].nama[a];
-                        if(uppercase >= 97 && uppercase <= 122){
-                            benda[i].nama[a] = uppercase - 32;
-                        }
+                for(i = 0; i < n; i++){
+                    daftardevice:
+                        printf("Silakan pilih salah satu dari device dibawah ini untuk di register\n");
+                        printf("1. Lampu\n");
+                        printf("2. Kipas angin\n");
+                        printf("3. AC\n");
+                        printf("4. TV\n");
+                        printf("5. Pemanas Air\n");
+                        printf("6. Daftar Manual\n");
+                        printf("Silakan pilih: ");
+                        scanf("%d", &device);
+                        printf("\n");
+
+                    switch(device){
+                        case 1:
+                            strcpy(benda[i].nama, "Lampu");
+                            printf("Masukkan kecerahan lampu: ");
+                            scanf("%d", &benda[i].temperatur);
+                            printf("Masukkan waktu lampu menyala: ");
+                            scanf("%s", benda[i].waktu_nyala);
+                            printf("Masukkan waktu lampu mati: ");
+                            scanf("%s", benda[i].waktu_mati);
+                            break;
+                        case 2:
+                            strcpy(benda[i].nama, "Kipas angin");
+                            printf("Masukkan kecepatan kipas angin (1-3): ");
+                            scanf("%d", &benda[i].kecepatan);
+                            printf("Masukkan waktu kipas angin menyala: ");
+                            scanf("%s", benda[i].waktu_nyala);
+                            printf("Masukkan waktu kipas angin mati: ");
+                            scanf("%s", benda[i].waktu_mati);
+                            break;
+                        case 3:
+                            strcpy(benda[i].nama, "AC");
+                            printf("Masukkan temperatur AC: ");
+                            scanf("%d", &benda[i].temperatur);
+                            printf("Masukkan waktu AC menyala: ");
+                            scanf("%s", benda[i].waktu_nyala);
+                            printf("Masukkan waktu AC mati: ");
+                            scanf("%s", benda[i].waktu_mati);
+                            break;
+                        case 4:
+                            strcpy(benda[i].nama, "TV");
+                            printf("Masukkan waktu TV menyala: ");
+                            scanf("%s", benda[i].waktu_nyala);
+                            printf("Masukkan waktu TV mati: ");
+                            scanf("%s", benda[i].waktu_mati);
+                            break;
+                        case 5:
+                            strcpy(benda[i].nama, "Pemanas Air");
+                            printf("Masukkan temperatur air: ");
+                            scanf("%d", &benda[i].temperatur);
+                            printf("Masukkan waktu pemanas air menyala: ");
+                            scanf("%s", benda[i].waktu_nyala);
+                            printf("Masukkan waktu pemanas air mati: ");
+                            scanf("%s", benda[i].waktu_mati);
+                            break;
+                        case 6:
+                            printf("Masukkan nama device: ");
+                            scanf("%s", benda[i].nama);
+                            printf("Masukkan waktu device menyala: ");
+                            scanf("%s", benda[i].waktu_nyala);
+                            printf("Masukkan waktu device mati: ");
+                            scanf("%s", benda[i].waktu_mati);
+                            break;
+                        default:
+                            printf("Invalid! Silakan ulangi\n");
+                            goto daftardevice;
+                            break;
                     }
-                    printf("Masukkan temperatur yang diinginkan: ");
-                    scanf("%d", &benda[i].temperatur);
-                    printf("Masukkan waktu nyala: ");
-                    scanf("%s", benda[i].waktu_nyala);
-                    printf("Masukkan waktu mati: ");
-                    scanf("%s", benda[i].waktu_mati);
+                    printf("Masukkan kwh device: ");
+                    scanf("%f", &benda[i].kwh);
                     benda[i].count = 0;
                 }
                 goto menu;
@@ -74,8 +134,9 @@ int main(){
                 system("cls");
                 printf("Device yang terdaftar: \n");
                 if(malloccheck == 0){
-                    printf("Tidak ada device yang terdaftar\n");
+                    printf("Tidak ada device yang terdaftar\n\n");
                     printf("Silakan register device terlebih dahulu\n");
+
                     printf("Tekan spasi untuk kembali ke menu\n");
                     back_menu = getch();
                     if(back_menu == 32){
@@ -83,7 +144,7 @@ int main(){
                     }
                 } else {
                     for(i=0; i<n; i++){
-                        printf("%s\n", benda[i].nama);
+                        printf("%d. %s\n", i+1, benda[i].nama);
                     }
                 }
                 printf("Tekan spasi untuk kembali ke menu\n");
@@ -180,6 +241,28 @@ int main(){
                 }
                 break;
             case 5:
+                //total kwh
+                system("cls");
+                if(malloccheck == 0){
+                    printf("Tidak ada device yang terdaftar\n");
+                    printf("Tekan spasi untuk kembali ke menu\n");
+                    back_menu = getch();
+                    if(back_menu == 32){
+                        goto menu;
+                    }
+                }else{
+                    for(i=0; i<n; i++){
+                        totalkwh += benda[i].kwh;
+                    }
+                    printf("Total kwh: %.2f\n", totalkwh);
+                    printf("Tekan spasi untuk kembali ke menu\n");
+                    back_menu = getch();
+                    if(back_menu == 32){
+                        goto menu;
+                    }
+                }
+                break;
+            case 6:
                 system("cls");
                 printf("Terima kasih telah menggunakan program ini\n");
                 free(benda);

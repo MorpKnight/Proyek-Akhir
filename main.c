@@ -14,9 +14,9 @@ typedef struct BENDA{
 
 int main(){
     int i, j, k, n, a;
-    int back_menu, pilihan, malloccheck, uppercase, mainmenu, device;
+    int back_menu, pilihan, malloccheck, uppercase, mainmenu, device, removedevice, totaldevice;
     float totalkwh;
-    char time_now[20], removename[20];
+    char time_now[20];
     RUMAH *benda;
     time_t s;
     struct tm* current_time;
@@ -48,12 +48,12 @@ int main(){
                 printf("Masukkan jumlah device yang ingin anda daftar: ");
                 scanf("%d", &n);
                 if(malloccheck == 0){
-                    benda = (RUMAH*)malloc(n*sizeof(RUMAH));
+                    benda = (RUMAH*)calloc(n, sizeof(RUMAH));
+                    totaldevice = n;
                     malloccheck = 1;
                 }
                 else{
-                    k = sizeof(benda);
-                    benda = (RUMAH*)realloc(benda, (n+k)*sizeof(RUMAH));
+                    benda = (RUMAH*)realloc(benda, (totaldevice + n) * sizeof(RUMAH));
                 }
                 for(i = 0; i < n; i++){
                     daftardevice:
@@ -169,33 +169,21 @@ int main(){
                     }
                 }else{
                     for(i=0; i<n; i++){
-                        printf("%s\n", benda[i].nama);
+                        printf("%d. %s\n", i+1, benda[i].nama);
                     }
-                    printf("Masukkan nama device yang ingin dihapus: ");
-                    scanf("%s", removename);
-                    for(a=0; a<strlen(removename); a++){
-                        uppercase = removename[a];
-                        if(uppercase >= 97 && uppercase <= 122){
-                            removename[a] = uppercase - 32;
-                        }
+                    printf("Silakan pilih device yang ingin dihapus: ");
+                    scanf("%d", &removedevice);
+                    //remove device from pointer struct then realloc benda
+                    for(i=removedevice-1; i<n; i++){
+                        benda[i] = benda[i+1];
                     }
-                    for(i=0; i<n; i++){
-                        if(strcmp(removename, benda[i].nama) == 0){
-                            for(j=i; j<n; j++){
-                                strcpy(benda[j].nama, benda[j+1].nama);
-                                benda[j].temperatur = benda[j+1].temperatur;
-                                strcpy(benda[j].waktu_nyala, benda[j+1].waktu_nyala);
-                                strcpy(benda[j].waktu_mati, benda[j+1].waktu_mati);
-                            }
-                            n -= 1;
-                            benda = (RUMAH*)realloc(benda, n*sizeof(RUMAH));
-                            printf("Device berhasil dihapus\n");
-                            printf("Tekan spasi untuk kembali ke menu\n");
-                            back_menu = getch();
-                            if(back_menu == 32){
-                                goto menu;
-                            }
-                        }
+                    n--;
+                    benda = realloc(benda, n*sizeof(RUMAH));
+                    printf("Device berhasil dihapus\n");
+                    printf("Tekan spasi untuk kembali ke menu\n");
+                    back_menu = getch();
+                    if(back_menu == 32){
+                        goto menu;
                     }
                 }
                 break;

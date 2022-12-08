@@ -16,7 +16,7 @@ int main(){
     int i, j, k, n, a;
     int back_menu, pilihan, malloccheck, uppercase, mainmenu, device, removedevice, totaldevice;
     float totalkwh;
-    char time_now[20];
+    char time_now[20], c;
     RUMAH *benda;
     time_t s;
     struct tm* current_time;
@@ -36,12 +36,14 @@ int main(){
         printf("3. Hapus perangkat\n");
         printf("4. Mode monitoring\n");
         printf("5. Total kwh\n");
-        printf("6. Exit\n");
+        printf("6. Help/Informasi mengenai program\n");
+        printf("7. Credit\n");
+        printf("8. Exit\n");
         printf("Pilihan anda: ");
         scanf("%d", &pilihan);
         mainmenu = 1;
 
-    while(pilihan != 6){
+    while(pilihan != 8){
         switch(pilihan){
             case 1:
                 system("cls");
@@ -115,6 +117,7 @@ int main(){
                             break;
                         case 6:
                             printf("Masukkan nama device: ");
+                            scanf("%c", &c);
                             fgets(benda[i].nama, 20, stdin);
                             printf("Masukkan waktu device menyala: ");
                             scanf("%s", benda[i].waktu_nyala);
@@ -177,8 +180,13 @@ int main(){
                     for(i=removedevice-1; i<n; i++){
                         benda[i] = benda[i+1];
                     }
-                    n--;
-                    benda = realloc(benda, n*sizeof(RUMAH));
+                    totaldevice--;
+                    if(totaldevice == 0){
+                        free(benda);
+                        malloccheck = 0;
+                    } else {
+                        benda = realloc(benda, totaldevice*sizeof(device));
+                    }
                     printf("Device berhasil dihapus\n");
                     printf("Tekan spasi untuk kembali ke menu\n");
                     back_menu = getch();
@@ -254,6 +262,52 @@ int main(){
                 }
                 break;
             case 6:
+                system("cls");
+                printf("Program ini merupakan program yang berfungsi untuk mengatur waktu nyala dan mati suatu device\n");
+                printf("Mengapa demikian? Tujuan dari program ini sebenarnya adalah untuk menghemat penggunaan listrik yang\n");
+                printf("digunakan, sehingga dapat menekan emisi CO2 yang dihasilkan oleh pembangkit listrik.\n");
+                printf("Dalam penggunaan energi listrik yang dihasilkan bukan dari sumber terbarukan, seperti batubara dan sejenisnya.\n");
+                printf("Dapat menghasilkan emisi karbon senilai 0.3878 kg CO2/kWh. Oleh karena itu, automasi perangkat listrik bisa\n");
+                printf("menjadi salah satu solusi untuk menjawab permasalahan tersebut.\n");
+                printf("\n\n");
+                printf("Penjelasan menu menu terkait yang terdapat pada program ini:\n");
+                printf("1. Daftar perangkat\n");
+                printf("Menu ini digunakan untuk mendaftarkan device yang ingin diatur waktu nyala dan mati nya.\n");
+                printf("2. Lihat daftar perangkat\n");
+                printf("Menu ini digunakan untuk melihat daftar device yang telah terdaftar.\n");
+                printf("3. Hapus perangkat\n");
+                printf("Menu ini digunakan untuk menghapus device yang telah terdaftar.\n");
+                printf("4. Mode monitoring\n");
+                printf("Menu ini digunakan untuk memonitoring device yang telah terdaftar.\n");
+                printf("5. Total kwh\n");
+                printf("Menu ini digunakan untuk melihat total kwh yang digunakan oleh device yang telah terdaftar.\n");
+                printf("6. Help\n");
+                printf("Menu ini digunakan untuk melihat informasi tentang program ini.\n");
+                printf("7. Credits\n");
+                printf("Menu ini digunakan untuk melihat informasi tentang pembuat program ini.\n");
+                printf("8. Exit\n");
+                printf("Menu ini digunakan untuk keluar dari program.\n");
+                printf("\n\n");
+                printf("Tekan spasi untuk kembali ke menu\n");
+                back_menu = getch();
+                if(back_menu == 32){
+                    goto menu;
+                }
+            case 7:
+                system("cls");
+                printf("Kelompok 5 ProgDas 2\n");
+                printf("1. Giovan Christoffel Sihombing (2206816084)\n");
+                printf("2. Adhelia Putri Maylani (2206814816)\n");
+                printf("3. Darren Adam Dewantoro (2206816600)\n");
+                printf("4. Annisa Ardelia Setiawan (2206059471)\n");
+                printf("\n");
+                printf("Tekan spasi untuk kembali ke menu\n");
+                back_menu = getch();
+                if(back_menu == 32){
+                    goto menu;
+                }
+                break;
+            case 8:
                 break;
             default:
                 system("cls");

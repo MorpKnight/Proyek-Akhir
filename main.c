@@ -8,12 +8,13 @@
 
 typedef struct BENDA{
     char nama[20], waktu_nyala[20], waktu_mati[20];
-    int temperatur, count, kecepatan, status;
+    int atribut, state;
     float kwh;
 } RUMAH;
 
 void register_device(RUMAH *benda, int n){
     int i, device;
+    char template;
     for(i = 0; i < n; i++){
         daftardevice:
             printf("Silakan pilih salah satu dari device dibawah ini untuk di register\n");
@@ -30,18 +31,35 @@ void register_device(RUMAH *benda, int n){
 
         switch(device){
             case 1:
-                strcpy(benda[i].nama, "Lampu");
-                printf("Masukkan kecerahan lampu: ");
-                scanf("%d", &benda[i].temperatur);
-                printf("Masukkan waktu lampu menyala: ");
-                scanf("%s", benda[i].waktu_nyala);
-                printf("Masukkan waktu lampu mati: ");
-                scanf("%s", benda[i].waktu_mati);
+
+                printf("Mau pakai template lampu? (y/n)\n");
+                printf("Kecerahan lamput (default): 300 LUX\n");
+                printf("Waktu menyala (default): 17:00\n");
+                printf("Waktu mati (default): 07:00\n");
+                printf("Pilihan: ");
+                scanf("%s", &template);
+                if(template == 'y' || template == 'Y'){
+                    strcpy(benda[i].nama, "Lampu");
+                    benda[i].atribut = 300;
+                    strcpy(benda[i].waktu_nyala, "17:00");
+                    strcpy(benda[i].waktu_mati, "07:00");
+                }else if(template == 'n' || template == 'N'){
+                    strcpy(benda[i].nama, "Lampu");
+                    printf("Masukkan kecerahan lampu: ");
+                    scanf("%d", &benda[i].atribut);
+                    printf("Masukkan waktu lampu menyala: ");
+                    scanf("%s", benda[i].waktu_nyala);
+                    printf("Masukkan waktu lampu mati: ");
+                    scanf("%s", benda[i].waktu_mati);
+                }else{
+                    printf("Pilihan tidak ada\n");
+                    goto daftardevice;
+                }
                 break;
             case 2:
                 strcpy(benda[i].nama, "Kipas angin");
                 printf("Masukkan kecepatan kipas angin (1-3): ");
-                scanf("%d", &benda[i].kecepatan);
+                scanf("%d", &benda[i].atribut);
                 printf("Masukkan waktu kipas angin menyala: ");
                 scanf("%s", benda[i].waktu_nyala);
                 printf("Masukkan waktu kipas angin mati: ");
@@ -50,7 +68,7 @@ void register_device(RUMAH *benda, int n){
             case 3:
                 strcpy(benda[i].nama, "AC");
                 printf("Masukkan temperatur AC: ");
-                scanf("%d", &benda[i].temperatur);
+                scanf("%d", &benda[i].atribut);
                 printf("Masukkan waktu AC menyala: ");
                 scanf("%s", benda[i].waktu_nyala);
                 printf("Masukkan waktu AC mati: ");
@@ -84,9 +102,9 @@ void register_device(RUMAH *benda, int n){
                 printf("Pilihan tidak ada\n");
                 goto daftardevice;
         }
-        printf("Masukan kwh device: ");
+        printf("Berapa watt perangkat tersebut: ");
         scanf("%f", &benda[i].kwh);
-        benda[i].count = 0;
+        benda[i].state = 0;
     }
 }
 
@@ -123,12 +141,11 @@ void remove_device(RUMAH *benda, int *n, int *malloccheck){
         if(device != 0){
             for(i = device-1; i < *n; i++){
                 strcpy(benda[i].nama, benda[i+1].nama);
-                benda[i].temperatur = benda[i+1].temperatur;
-                benda[i].kecepatan = benda[i+1].kecepatan;
+                benda[i].atribut = benda[i+1].atribut;
                 benda[i].kwh = benda[i+1].kwh;
                 strcpy(benda[i].waktu_nyala, benda[i+1].waktu_nyala);
                 strcpy(benda[i].waktu_mati, benda[i+1].waktu_mati);
-                benda[i].count = benda[i+1].count;
+                benda[i].state = benda[i+1].state;
             }
             *n = *n - 1;
             printf("Device berhasil dihapus\n");
@@ -177,9 +194,27 @@ void credit(){
     printf("Tekan spasi untuk kembali ke menu\n");
 }
 
+void print_smart_home(){
+    printf("db   d8b   db d88888b db       .o88b.  .d88b.  .88b  d88. d88888b \n");
+    printf("88   I8I   88 88'     88      d8P  Y8 .8P  Y8. 88'YbdP`88 88'     \n");
+    printf("88   I8I   88 88ooooo 88      8P      88    88 88  88  88 88ooooo \n");
+    printf("Y8   I8I   88 88~~~~~ 88      8b      88    88 88  88  88 88~~~~~ \n");
+    printf("`8b d8'8b d8' 88.     88booo. Y8b  d8 `8b  d8' 88  88  88 88.     \n");
+    printf(" `8b8' `8d8'  Y88888P Y88888P  `Y88P'  `Y88P'  YP  YP  YP Y88888P  TO\n");
+    printf("                                                                  \n");
+    printf("  ******** ****     ****     **     *******   **********       **      **   *******   ****     **** ********\n");
+    printf(" **////// /**/**   **/**    ****   /**////** /////**///       /**     /**  **/////** /**/**   **/**/**///// \n");
+    printf("/**       /**//** ** /**   **//**  /**   /**     /**          /**     /** **     //**/**//** ** /**/**      \n");
+    printf("/*********/** //***  /**  **  //** /*******      /**          /**********/**      /**/** //***  /**/******* \n");
+    printf("////////**/**  //*   /** **********/**///**      /**          /**//////**/**      /**/**  //*   /**/**////  \n");
+    printf("       /**/**   /    /**/**//////**/**  //**     /**          /**     /**//**     ** /**   /    /**/**      \n");
+    printf(" ******** /**        /**/**     /**/**   //**    /**          /**     /** //*******  /**        /**/********\n");
+    printf("////////  //         // //      // //     //     //           //      //   ///////   //         // ////////  by Kelompok 5 ProgDas 2\n");
+}
+
 int main(){
-    int i, j, k, n, a;
-    int back_menu, pilihan, malloccheck, uppercase, mainmenu, device, removedevice, totaldevice;
+    int i, n;
+    int back_menu, pilihan, malloccheck, mainmenu, totaldevice;
     float totalkwh;
     char time_now[20], c;
     RUMAH *benda;
@@ -189,6 +224,8 @@ int main(){
     malloccheck = 0;
     mainmenu = 0;
 
+    print_smart_home();
+    printf("\n");
 
     menu:
         if(mainmenu == 1){
@@ -267,22 +304,22 @@ int main(){
                         
                         for(i=0; i<n; i++){
                             if(strcmp(time_now, benda[i].waktu_nyala) == 0){
-                                if(benda[i].count == 0){
+                                if(benda[i].state == 0){
                                     printf("%s nyala\n", benda[i].nama);
-                                    benda[i].count = 1;
+                                    benda[i].state = 1;
                                 }
                             }
                             if(strcmp(time_now, benda[i].waktu_mati) == 0){
-                                if(benda[i].count == 1){
+                                if(benda[i].state == 1){
                                     printf("%s mati\n", benda[i].nama);
-                                    benda[i].count = 0;
+                                    benda[i].state = 0;
                                 }
                             }
                         }
                         while(clock() < start_time + 1 * CLOCKS_PER_SEC){
                             if(kbhit()){
-                                a = _getch();
-                                if(a == 32){
+                                back_menu = _getch();
+                                if(back_menu == 32){
                                     goto menu;
                                 }
                             }
@@ -305,7 +342,7 @@ int main(){
                     for(i=0; i<n; i++){
                         totalkwh += benda[i].kwh;
                     }
-                    printf("Total kwh: %.2f\n", totalkwh);
+                    printf("Total pemakaian watt per jamnya: %.2f\n", totalkwh);
                     printf("Tekan spasi untuk kembali ke menu\n");
                     back_menu = getch();
                     if(back_menu == 32){
@@ -342,7 +379,6 @@ int main(){
     endprogram:
         system("cls");
         printf("Terima kasih telah menggunakan program ini\n");
-        //check to free memory
         if(malloccheck == 1){
             free(benda);
         }

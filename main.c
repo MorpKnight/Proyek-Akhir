@@ -60,6 +60,10 @@ void register_device(RUMAH *benda, int n){
                 strcpy(benda[i].nama, "Kipas angin");
                 printf("Masukkan kecepatan kipas angin (1-3): ");
                 scanf("%d", &benda[i].atribut);
+                if(benda[i].atribut < 1 || benda[i].atribut > 3){
+                    printf("Kecepatan kipas angin tidak ada\n");
+                    goto daftardevice;
+                }
                 printf("Masukkan waktu kipas angin menyala: ");
                 scanf("%s", benda[i].waktu_nyala);
                 printf("Masukkan waktu kipas angin mati: ");
@@ -216,7 +220,7 @@ int main(){
     int i, n;
     int back_menu, pilihan, malloccheck, mainmenu, totaldevice;
     float totalkwh;
-    char time_now[20], c;
+    char time_now[50], c;
     RUMAH *benda;
     time_t s;
     struct tm* current_time;
@@ -298,7 +302,8 @@ int main(){
                     while(1){
                         s = time(NULL);
                         current_time = localtime(&s);
-                        sprintf(time_now, "%02d:%02d", current_time->tm_hour, current_time->tm_min);
+                        strftime(time_now, sizeof(time_now), "%a, %d %b %Y %H:%M", current_time);
+                        printf("%s\r", time_now);
                         
                         clock_t start_time = clock();
                         
@@ -342,7 +347,8 @@ int main(){
                     for(i=0; i<n; i++){
                         totalkwh += benda[i].kwh;
                     }
-                    printf("Total pemakaian watt per jamnya: %.2f\n", totalkwh);
+                    printf("Total pemakaian watt per jamnya: %.2f kwh\n", totalkwh);
+                    printf("Pemakaian diatas adalah pemakaian diluar pemakaian yang tidak terdaftar\n");
                     printf("Tekan spasi untuk kembali ke menu\n");
                     back_menu = getch();
                     if(back_menu == 32){

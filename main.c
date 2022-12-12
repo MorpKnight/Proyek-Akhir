@@ -288,7 +288,7 @@ void register_device(RUMAH *benda, int n) {
 	
 	// Pendeklarasian variabel
     int i, device;
-    char template;
+    char template, c;
     for(i = 0; i < n; i++){
         daftardevice:
             printf("Silakan pilih salah satu dari device dibawah ini untuk di register\n");
@@ -575,7 +575,7 @@ int main(){
     int i, n;
     int back_menu, pilihan, malloccheck, mainmenu, totaldevice;
     float totalkwh;
-    char time_now[50], c;
+    char time_now[50], check_time[6], c;
     RUMAH *benda;
     time_t s;
     struct tm* current_time;
@@ -659,6 +659,7 @@ int main(){
                         current_time = localtime(&s);
                         strftime(time_now, sizeof(time_now), "%a, %d %b %Y %H:%M", current_time);
                         printf("%s\r", time_now);
+                        sprintf(check_time, "%H:%M", current_time->tm_hour, current_time->tm_min);
                         
                         clock_t start_time = clock();
                         

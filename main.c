@@ -14,7 +14,7 @@ typedef struct BENDA{
 
 void register_device(RUMAH *benda, int n){
     int i, device;
-    char template;
+    char template, c;
     for(i = 0; i < n; i++){
         daftardevice:
             printf("Silakan pilih salah satu dari device dibawah ini untuk di register\n");
@@ -94,7 +94,8 @@ void register_device(RUMAH *benda, int n){
                 break;
             case 6:
                 printf("Masukkan nama device: ");
-                scanf("%s", benda[i].nama);
+                scanf("%c", &c);
+                fgets(benda[i].nama, 20, stdin);
                 printf("Masukkan waktu device menyala: ");
                 scanf("%s", benda[i].waktu_nyala);
                 printf("Masukkan waktu device mati: ");
@@ -220,7 +221,7 @@ int main(){
     int i, n;
     int back_menu, pilihan, malloccheck, mainmenu, totaldevice;
     float totalkwh;
-    char time_now[50], c;
+    char time_now[50], check_time[6], c;
     RUMAH *benda;
     time_t s;
     struct tm* current_time;

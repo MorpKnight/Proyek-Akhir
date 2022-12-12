@@ -554,7 +554,7 @@ void credit(){
     printf("Tekan spasi untuk kembali ke menu\n");
 }
 
-// Fungsi ini untuk mengeluarkan output WeLCOME to SMART HOME
+// Fungsi ini untuk mengeluarkan output WELCOME to SMART HOME
 // untuk user yang baru datang
 void print_smart_home(){
     printf("db   d8b   db d88888b db       .o88b.  .d88b.  .88b  d88. d88888b \n");

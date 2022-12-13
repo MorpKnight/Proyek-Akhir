@@ -14,7 +14,7 @@ typedef struct BENDA {
     float kwh;
 } RUMAH;
 
-//Function prototype
+//Function definition
 void register_device(RUMAH *benda, int n);
 void show_device(RUMAH *benda, int n, int malloccheck);
 void remove_device(RUMAH *benda, int *n, int *malloccheck);
@@ -28,7 +28,7 @@ int main() {
     int i, n;
     int back_menu, pilihan, malloccheck, mainmenu, totaldevice;
     float totalkwh;
-    char time_now[50], c;
+    char time_now[50], check_time[6], c;
     RUMAH *benda;
     
     // Buat jam lokal di dalam program
@@ -152,6 +152,7 @@ int main() {
                         s = time(NULL);
                         current_time = localtime(&s);
                         strftime(time_now, sizeof(time_now), "%a, %d %b %Y %H:%M", current_time);
+                        strftime(check_time, sizeof(check_time), "%H:%M", current_time);
                         printf("%s\r", time_now);
                         
                         clock_t start_time = clock();
@@ -160,15 +161,15 @@ int main() {
                         for(i=0; i<n; i++){
                         	
                         	// Jika sudah waktunya perangkat ke-i untuk menyala maka beri tahu user
-                            if(strcmp(time_now, benda[i].waktu_nyala) == 0){
+                            if(strcmp(check_time, benda[i].waktu_nyala) == 0){
                                 if(benda[i].state == 0){
-                                    printf("%s nyala\n", benda[i].nama);
+                                    printf("%s nyala               \n", benda[i].nama);
                                     benda[i].state = 1; // Menyalakan perangkat
                                 }
                             }
                             
                             // Jika sudah waktunya perangkat ke-i mati maka beri tahu user
-                            if(strcmp(time_now, benda[i].waktu_mati) == 0){
+                            if(strcmp(check_time, benda[i].waktu_mati) == 0){
                                 if(benda[i].state == 1){
                                     printf("%s mati\n", benda[i].nama);
                                     benda[i].state = 0; // Mematikan penrangkat
@@ -281,19 +282,15 @@ int main() {
     return 0;
 }
 
-// Function definition
+// Function Prototype
 
 // Fungsi untuk mendaftarkan perangkat
 void register_device(RUMAH *benda, int n) {
 	
 	// Pendeklarasian variabel
     int i, device;
-    char template;
-    
-    // Memasukkan perangkat sebanyak yang diminta user
-    for(i = 0; i < n; i++) {
-    	
-    	// Label statement untuk menu pendaftaran
+    char template, c;
+    for(i = 0; i < n; i++){
         daftardevice:
             printf("Silakan pilih salah satu dari device dibawah ini untuk di register\n");
             printf("1. Lampu\n");
@@ -415,7 +412,8 @@ void register_device(RUMAH *benda, int n) {
             	// Meminta user untuk memasukkan nama, waktu 
             	// menyala, dan waktu mati dari perangkat
                 printf("Masukkan nama device: ");
-                scanf("%s", benda[i].nama);
+                scanf("%c", &c);
+                fgets(benda[i].nama, 20, stdin);
                 printf("Masukkan waktu device menyala: ");
                 scanf("%s", benda[i].waktu_nyala);
                 printf("Masukkan waktu device mati: ");

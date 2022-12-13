@@ -28,7 +28,7 @@ int main() {
     int i, n;
     int back_menu, pilihan, malloccheck, mainmenu, totaldevice;
     float totalkwh;
-    char time_now[50], c;
+    char time_now[50], check_time[6], c;
     RUMAH *benda;
     
     // Buat jam lokal di dalam program
@@ -152,6 +152,7 @@ int main() {
                         s = time(NULL);
                         current_time = localtime(&s);
                         strftime(time_now, sizeof(time_now), "%a, %d %b %Y %H:%M", current_time);
+                        strftime(check_time, sizeof(check_time), "%H:%M", current_time);
                         printf("%s\r", time_now);
                         
                         clock_t start_time = clock();
@@ -160,15 +161,15 @@ int main() {
                         for(i=0; i<n; i++){
                         	
                         	// Jika sudah waktunya perangkat ke-i untuk menyala maka beri tahu user
-                            if(strcmp(time_now, benda[i].waktu_nyala) == 0){
+                            if(strcmp(check_time, benda[i].waktu_nyala) == 0){
                                 if(benda[i].state == 0){
-                                    printf("%s nyala\n", benda[i].nama);
+                                    printf("%s nyala               \n", benda[i].nama);
                                     benda[i].state = 1; // Menyalakan perangkat
                                 }
                             }
                             
                             // Jika sudah waktunya perangkat ke-i mati maka beri tahu user
-                            if(strcmp(time_now, benda[i].waktu_mati) == 0){
+                            if(strcmp(check_time, benda[i].waktu_mati) == 0){
                                 if(benda[i].state == 1){
                                     printf("%s mati\n", benda[i].nama);
                                     benda[i].state = 0; // Mematikan penrangkat
@@ -569,180 +570,4 @@ void print_smart_home(){
     printf("       /**/**   /    /**/**//////**/**  //**     /**          /**     /**//**     ** /**   /    /**/**      \n");
     printf(" ******** /**        /**/**     /**/**   //**    /**          /**     /** //*******  /**        /**/********\n");
     printf("////////  //         // //      // //     //     //           //      //   ///////   //         // ////////  by Kelompok 5 ProgDas 2\n");
-}
-
-int main(){
-    int i, n;
-    int back_menu, pilihan, malloccheck, mainmenu, totaldevice;
-    float totalkwh;
-    char time_now[50], check_time[6], c;
-    RUMAH *benda;
-    time_t s;
-    struct tm* current_time;
-
-    malloccheck = 0;
-    mainmenu = 0;
-
-    print_smart_home();
-    printf("\n");
-
-    menu:
-        if(mainmenu == 1){
-            system("cls");
-        }
-        printf("Program ini adalah untuk mengatur device di rumah anda\n");
-        printf("Silakan pilih menu dibawah ini\n");
-        printf("1. Daftar perangkat\n");
-        printf("2. Lihat perangkat yang terdaftar\n");
-        printf("3. Hapus perangkat\n");
-        printf("4. Mode monitoring\n");
-        printf("5. Total kwh\n");
-        printf("6. Help/Informasi mengenai program\n");
-        printf("7. Credit\n");
-        printf("8. Exit\n");
-        printf("Pilihan anda: ");
-        scanf("%d", &pilihan);
-        mainmenu = 1;
-
-    while(pilihan != 8){
-        switch(pilihan){
-            case 1:
-                system("cls");
-                printf("Masukkan jumlah device yang ingin anda daftar: ");
-                scanf("%d", &n);
-                if(malloccheck == 0){
-                    benda = (RUMAH*)calloc(n, sizeof(RUMAH));
-                    totaldevice = n;
-                    malloccheck = 1;
-                }
-                else{
-                    n = n + totaldevice;
-                    benda = (RUMAH*)realloc(benda, (totaldevice + n) * sizeof(RUMAH));
-                }
-                register_device(benda, n);
-                goto menu;
-                break;
-            case 2:
-                show_device(benda, n, malloccheck);
-                back_menu = getch();
-                if(back_menu == 32){
-                    goto menu;
-                }
-                break;
-            case 3:
-                remove_device(benda, &n, &malloccheck);
-                if(n == 0){
-                    free(benda);
-                    malloccheck = 0;
-                } else {
-                    benda = (RUMAH*)realloc(benda, n * sizeof(RUMAH));
-                }
-                printf("Tekan spasi untuk kembali ke menu\n");
-                back_menu = getch();
-                if(back_menu == 32){
-                    goto menu;
-                }
-                break;
-            case 4:
-                system("cls");
-                if(malloccheck == 0){
-                    printf("Tidak ada device yang terdaftar\n");
-                    printf("Tekan spasi untuk kembali ke menu\n");
-                    back_menu = getch();
-                    if(back_menu == 32){
-                        goto menu;
-                    }
-                }else{
-                    printf("Press spacebar to quit\n");
-                    while(1){
-                        s = time(NULL);
-                        current_time = localtime(&s);
-                        strftime(time_now, sizeof(time_now), "%a, %d %b %Y %H:%M", current_time);
-                        printf("%s\r", time_now);
-                        sprintf(check_time, "%H:%M", current_time->tm_hour, current_time->tm_min);
-                        
-                        clock_t start_time = clock();
-                        
-                        for(i=0; i<n; i++){
-                            if(strcmp(time_now, benda[i].waktu_nyala) == 0){
-                                if(benda[i].state == 0){
-                                    printf("%s nyala\n", benda[i].nama);
-                                    benda[i].state = 1;
-                                }
-                            }
-                            if(strcmp(time_now, benda[i].waktu_mati) == 0){
-                                if(benda[i].state == 1){
-                                    printf("%s mati\n", benda[i].nama);
-                                    benda[i].state = 0;
-                                }
-                            }
-                        }
-                        while(clock() < start_time + 1 * CLOCKS_PER_SEC){
-                            if(kbhit()){
-                                back_menu = _getch();
-                                if(back_menu == 32){
-                                    goto menu;
-                                }
-                            }
-                        }
-
-                        sleep(1);
-                    }
-                }
-                break;
-            case 5:
-                system("cls");
-                if(malloccheck == 0){
-                    printf("Tidak ada device yang terdaftar\n");
-                    printf("Tekan spasi untuk kembali ke menu\n");
-                    back_menu = getch();
-                    if(back_menu == 32){
-                        goto menu;
-                    }
-                }else{
-                    for(i=0; i<n; i++){
-                        totalkwh += benda[i].kwh;
-                    }
-                    printf("Total pemakaian watt per jamnya: %.2f kwh\n", totalkwh);
-                    printf("Pemakaian diatas adalah pemakaian diluar pemakaian yang tidak terdaftar\n");
-                    printf("Tekan spasi untuk kembali ke menu\n");
-                    back_menu = getch();
-                    if(back_menu == 32){
-                        goto menu;
-                    }
-                }
-                break;
-            case 6:
-                help();
-                back_menu = getch();
-                if(back_menu == 32){
-                    goto menu;
-                }
-            case 7:
-                credit();
-                back_menu = getch();
-                if(back_menu == 32){
-                    goto menu;
-                }
-                break;
-            case 8:
-                break;
-            default:
-                system("cls");
-                printf("Pilihan anda tidak ada\n");
-                printf("Tekan spasi untuk kembali ke menu\n");
-                back_menu = getch();
-                if(back_menu == 32){
-                    goto menu;
-                }
-                break;
-        }
-    }
-    endprogram:
-        system("cls");
-        printf("Terima kasih telah menggunakan program ini\n");
-        if(malloccheck == 1){
-            free(benda);
-        }
-    return 0;
 }
